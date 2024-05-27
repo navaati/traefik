@@ -496,22 +496,20 @@ type connectionTracker struct {
 func (c *connectionTracker) AddConnection(conn net.Conn) {
 	c.connsMu.Lock()
 	c.conns[conn] = struct{}{}
-	c.connsMu.Unlock()
-
 	if c.openConnectionsGauge != nil {
 		c.openConnectionsGauge.Add(1)
 	}
+	c.connsMu.Unlock()
 }
 
 // RemoveConnection remove a connection from the tracked connections list.
 func (c *connectionTracker) RemoveConnection(conn net.Conn) {
 	c.connsMu.Lock()
 	delete(c.conns, conn)
-	c.connsMu.Unlock()
-
 	if c.openConnectionsGauge != nil {
 		c.openConnectionsGauge.Add(-1)
 	}
+	c.connsMu.Unlock()
 }
 
 func (c *connectionTracker) isEmpty() bool {
